@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Café Artesanal | Entrar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      :root {
+        --espresso:    #1A0A05;
+        --roast:       #3D1A08;
+        --caramel:     #C27B40;
+        --latte:       #D4956A;
+        --cream:       #F5E6D3;
+        --foam:        #FDF6EE;
+        --text-dark:   #1A0A05;
+        --text-light:  #F5E6D3;
+        --text-muted:  rgba(245,230,211,0.65);
+        --radius:      14px;
+        --trans:       0.25s ease;
+      }
+
+      html, body {
+        height: 100%;
+        font-family: 'Poppins', sans-serif;
+      }
+
+      body {
+        display: flex;
+        min-height: 100vh;
+        background: var(--espresso);
+        overflow-x: hidden;
+      }
+
+      /* ─── Toast ──────────────────────────────────────────────── */
+      .toast-container {
+        position: fixed; top: 1.25rem; right: 1.25rem;
+        z-index: 9999; display: flex; flex-direction: column; gap: .6rem;
+      }
+      .toast {
+        background: #fff; padding: .85rem 1.25rem;
+        border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+        display: flex; align-items: center; gap: .75rem; min-width: 280px;
+        animation: slideInRight .3s ease-out;
+        font-family: 'Poppins', sans-serif; font-size: .875rem;
+      }
+      .toast.success { border-left: 4px solid #27ae60; }
+      .toast.error   { border-left: 4px solid #e74c3c; }
+      .toast.info    { border-left: 4px solid #3498db; }
+      .toast.hiding  { animation: slideOutRight .3s ease-out forwards; }
+      @keyframes slideInRight  { from { opacity:0; transform:translateX(120%) } to { opacity:1; transform:translateX(0) } }
+      @keyframes slideOutRight { from { opacity:1; transform:translateX(0) }    to { opacity:0; transform:translateX(120%) } }
+
+      /* ─── Layout ─────────────────────────────────────────────── */
+      .auth-left {
+        flex: 0 0 46%;
+        background: linear-gradient(160deg, var(--roast) 0%, var(--espresso) 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 2.5rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* decorative circles */
+      .auth-left::before {
+        content: '';
+        position: absolute;
+        width: 420px; height: 420px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(194,123,64,0.18);
+        top: -80px; left: -100px;
+        pointer-events: none;
+      }
+      .auth-left::after {
+        content: '';
+        position: absolute;
+        width: 280px; height: 280px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(194,123,64,0.12);
+        bottom: -60px; right: -70px;
+        pointer-events: none;
+      }
+
+      .auth-right {
+        flex: 1;
+        background: var(--foam);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2.5rem 2rem;
+        position: relative;
+      }
+
+      /* curved connector */
+      .auth-right::before {
+        content: '';
+        position: absolute;
+        left: -30px; top: 0; bottom: 0;
+        width: 60px;
+        background: var(--foam);
+        border-radius: 50% 0 0 50% / 50% 0 0 50%;
+      }
+
+      /* ─── Left panel content ─────────────────────────────────── */
+      .brand-badge {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        margin-bottom: 3rem;
+        align-self: flex-start;
+        position: relative;
+        z-index: 1;
+      }
+
+      .brand-badge span {
+        color: var(--cream);
+        font-family: 'Playfair Display', serif;
+        font-size: 1.15rem;
+        font-weight: 600;
+        letter-spacing: .02em;
+      }
+
+      .coffee-art {
+        position: relative;
+        z-index: 1;
+        margin-bottom: 2.5rem;
+      }
+
+      /* animated steam */
+      .steam-line {
+        transform-origin: bottom center;
+        animation: steam 2.2s ease-in-out infinite;
+      }
+      .steam-line:nth-child(2) { animation-delay: .4s; }
+      .steam-line:nth-child(3) { animation-delay: .8s; }
+      @keyframes steam {
+        0%, 100% { opacity: 0; transform: translateY(0) scaleX(1); }
+        40%       { opacity: .7; }
+        100%      { opacity: 0; transform: translateY(-18px) scaleX(1.3); }
+      }
+
+      .left-headline {
+        color: var(--cream);
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        font-weight: 700;
+        line-height: 1.25;
+        margin-bottom: .9rem;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .left-sub {
+        color: var(--text-muted);
+        font-size: .9rem;
+        text-align: center;
+        line-height: 1.6;
+        max-width: 280px;
+        position: relative;
+        z-index: 1;
+      }
+
+
+      /* ─── Right panel ────────────────────────────────────────── */
+      .auth-box {
+        width: 100%;
+        max-width: 400px;
+        position: relative;
+        z-index: 1;
+        animation: fadeUp .45s ease-out;
+      }
+
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(24px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+
+      .auth-box-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: .3rem;
+      }
+
+      .auth-box-sub {
+        font-size: .875rem;
+        color: #888;
+        margin-bottom: 1.75rem;
+      }
+
+      /* ─── Tabs ───────────────────────────────────────────────── */
+      .auth-tabs {
+        display: flex;
+        background: #ede7df;
+        border-radius: 10px;
+        padding: 4px;
+        margin-bottom: 1.75rem;
+        gap: 4px;
+      }
+
+      .auth-tab {
+        flex: 1;
+        padding: .6rem;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        font-family: 'Poppins', sans-serif;
+        font-size: .875rem;
+        font-weight: 500;
+        color: #888;
+        cursor: pointer;
+        transition: all var(--trans);
+      }
+
+      .auth-tab.active {
+        background: #fff;
+        color: var(--roast);
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      /* ─── Panels ─────────────────────────────────────────────── */
+      .auth-panel { display: none; }
+      .auth-panel.active { display: block; animation: fadeUp .3s ease-out; }
+
+      /* ─── Form ───────────────────────────────────────────────── */
+      .form-group {
+        margin-bottom: 1.1rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: .8rem;
+        font-weight: 600;
+        color: #666;
+        margin-bottom: .4rem;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+      }
+
+      .input-wrap {
+        position: relative;
+      }
+
+      .input-icon {
+        position: absolute;
+        left: .9rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #bbb;
+        pointer-events: none;
+        transition: color var(--trans);
+      }
+
+      .input-wrap input {
+        width: 100%;
+        padding: .75rem 1rem .75rem 2.6rem;
+        border: 1.5px solid #e2d8cf;
+        border-radius: var(--radius);
+        background: #fff;
+        color: var(--text-dark);
+        font-family: 'Poppins', sans-serif;
+        font-size: .95rem;
+        transition: border-color var(--trans), box-shadow var(--trans);
+        outline: none;
+      }
+
+      .input-wrap input:focus {
+        border-color: var(--caramel);
+        box-shadow: 0 0 0 3.5px rgba(194,123,64,0.14);
+      }
+
+      .input-wrap input:focus + .input-icon,
+      .input-wrap:focus-within .input-icon {
+        color: var(--caramel);
+      }
+
+      .input-hint {
+        font-size: .75rem;
+        color: #aaa;
+        margin-top: .3rem;
+        padding-left: .2rem;
+      }
+
+      /* ─── Error ──────────────────────────────────────────────── */
+      .auth-error {
+        background: #fff0f0;
+        color: #c0392b;
+        border: 1px solid #f5c6cb;
+        border-radius: 10px;
+        padding: .65rem 1rem;
+        font-size: .85rem;
+        margin-bottom: 1rem;
+        display: none;
+        animation: fadeUp .25s ease-out;
+      }
+      .auth-error.visible { display: flex; align-items: center; gap: .5rem; }
+
+      /* ─── Submit button ──────────────────────────────────────── */
+      .btn-auth {
+        width: 100%;
+        padding: .9rem;
+        background: linear-gradient(135deg, var(--roast), var(--caramel));
+        color: #fff;
+        border: none;
+        border-radius: var(--radius);
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        letter-spacing: .03em;
+        transition: opacity var(--trans), transform var(--trans), box-shadow var(--trans);
+        box-shadow: 0 4px 18px rgba(61,26,8,0.3);
+        margin-top: .4rem;
+      }
+      .btn-auth:hover   { opacity: .92; transform: translateY(-1px); box-shadow: 0 6px 22px rgba(61,26,8,0.35); }
+      .btn-auth:active  { transform: translateY(0); }
+      .btn-auth:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+      /* ─── Footer link ────────────────────────────────────────── */
+      .auth-footer-link {
+        text-align: center;
+        margin-top: 1.25rem;
+        font-size: .85rem;
+        color: #999;
+      }
+      .auth-footer-link a {
+        color: var(--caramel);
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .auth-footer-link a:hover { text-decoration: underline; }
+
+      .divider {
+        display: flex; align-items: center; gap: .75rem;
+        margin: 1.25rem 0; color: #ccc; font-size: .8rem;
+      }
+      .divider::before, .divider::after {
+        content: ''; flex: 1; height: 1px; background: #e8e0d8;
+      }
+
+      /* ─── Back link ──────────────────────────────────────────── */
+      .back-home {
+        position: absolute;
+        top: 1.5rem; left: 1.5rem;
+        display: flex; align-items: center; gap: .4rem;
+        color: var(--text-muted);
+        font-size: .8rem;
+        text-decoration: none;
+        transition: color var(--trans);
+        z-index: 2;
+      }
+      .back-home:hover { color: var(--cream); }
+
+      /* ─── Responsive ─────────────────────────────────────────── */
+      @media (max-width: 768px) {
+        body { flex-direction: column; }
+
+        .auth-left {
+          flex: 0 0 auto;
+          padding: 2.5rem 1.5rem 4rem;
+          min-height: 260px;
+        }
+        .auth-left::before { width: 280px; height: 280px; top: -60px; left: -60px; }
+        .auth-left::after  { display: none; }
+
+        .auth-right {
+          flex: 1;
+          padding: 2rem 1.25rem;
+        }
+        .auth-right::before {
+          left: 0; right: 0; top: -30px; bottom: auto;
+          width: 100%; height: 60px;
+          border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+        }
+
+        .brand-badge { margin-bottom: 1.5rem; }
+        .coffee-art  { margin-bottom: 1.25rem; }
+        .left-headline { font-size: 1.5rem; }
+        .left-dots { margin-top: 1.5rem; }
+        .auth-box { max-width: 100%; }
+      }
+
+      @media (max-width: 400px) {
+        .auth-right { padding: 1.75rem 1rem; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ─── Left Panel ──────────────────────────────────────── -->
+    <aside class="auth-left">
+      <a href="index.html" class="back-home">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Voltar
+      </a>
+
+      <div class="brand-badge">
+        <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+          <circle cx="20" cy="20" r="18" fill="rgba(194,123,64,0.22)"/>
+          <path d="M20 10C15 10 12 12 12 15V18C12 21 15 23 20 23C25 23 28 21 28 18V15C28 12 25 10 20 10Z" fill="#F5E6D3"/>
+          <ellipse cx="20" cy="24" rx="6" ry="1.8" fill="rgba(245,230,211,0.3)"/>
+          <path d="M14 24V27C14 28 16 29 20 29C24 29 26 28 26 27V24" stroke="#F5E6D3" stroke-width="1.5"/>
+        </svg>
+        <span>Café Artesanal</span>
+      </div>
+
+      <!-- Illustrated coffee cup -->
+      <div class="coffee-art">
+        <svg width="160" height="175" viewBox="0 0 160 175" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- steam lines -->
+          <path class="steam-line" d="M58 32 Q54 24 58 16 Q62 8 58 0" stroke="rgba(245,230,211,0.5)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path class="steam-line" d="M80 28 Q76 20 80 12 Q84 4 80 -4" stroke="rgba(245,230,211,0.5)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path class="steam-line" d="M102 32 Q98 24 102 16 Q106 8 102 0" stroke="rgba(245,230,211,0.5)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <!-- saucer -->
+          <ellipse cx="80" cy="155" rx="62" ry="12" fill="rgba(194,123,64,0.25)"/>
+          <path d="M24 148 Q80 168 136 148" stroke="rgba(194,123,64,0.4)" stroke-width="1.5" fill="none"/>
+          <!-- cup body -->
+          <path d="M30 60 L40 148 Q80 160 120 148 L130 60 Z" fill="#3D1A08"/>
+          <path d="M30 60 L40 148 Q80 160 120 148 L130 60 Z" fill="url(#cupGrad)"/>
+          <!-- cup rim -->
+          <ellipse cx="80" cy="60" rx="50" ry="12" fill="#4E2210"/>
+          <ellipse cx="80" cy="60" rx="46" ry="10" fill="#5A2813"/>
+          <!-- coffee surface -->
+          <ellipse cx="80" cy="60" rx="42" ry="9" fill="#8B4513"/>
+          <!-- latte art - leaf -->
+          <ellipse cx="80" cy="60" rx="30" ry="6.5" fill="#C27B40" opacity=".7"/>
+          <path d="M50 60 Q65 54 80 60 Q65 66 50 60Z" fill="rgba(245,230,211,0.18)"/>
+          <path d="M80 60 Q95 54 110 60 Q95 66 80 60Z" fill="rgba(245,230,211,0.18)"/>
+          <path d="M80 53 Q84 57 80 60 Q76 57 80 53Z" fill="rgba(245,230,211,0.25)"/>
+          <!-- handle -->
+          <path d="M130 80 Q152 80 152 105 Q152 130 130 130" stroke="#4E2210" stroke-width="12" stroke-linecap="round" fill="none"/>
+          <path d="M130 80 Q148 80 148 105 Q148 130 130 130" stroke="#3D1A08" stroke-width="7" stroke-linecap="round" fill="none"/>
+          <!-- shimmer on cup -->
+          <path d="M40 75 Q48 110 44 140" stroke="rgba(255,255,255,0.06)" stroke-width="6" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="cupGrad" x1="30" y1="60" x2="130" y2="148" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.08)"/>
+              <stop offset="100%" stop-color="rgba(0,0,0,0.1)"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <h2 class="left-headline">O melhor café<br>da cidade</h2>
+      <p class="left-sub">Peça seus favoritos com um clique e receba com carinho.</p>
+
+    </aside>
+
+    <!-- ─── Right Panel ─────────────────────────────────────── -->
+    <main class="auth-right">
+      <div class="auth-box">
+        <h1 class="auth-box-title" id="authTitle">Bem-vindo de volta</h1>
+        <p class="auth-box-sub" id="authSub">Entre na sua conta para fazer seu pedido</p>
+
+        <!-- Tabs -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tabLogin" onclick="trocarAba('login')">Entrar</button>
+          <button class="auth-tab" id="tabCadastro" onclick="trocarAba('cadastro')">Criar Conta</button>
+        </div>
+
+        <!-- LOGIN PANEL -->
+        <div class="auth-panel active" id="panelLogin">
+          <div class="auth-error" id="erroLogin">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span></span>
+          </div>
+          <form id="formLogin" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label for="loginCpf">CPF</label>
+              <div class="input-wrap">
+                <input type="text" id="loginCpf" placeholder="000.000.000-00" maxlength="14" required autocomplete="username"/>
+                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="loginSenha">Senha</label>
+              <div class="input-wrap">
+                <input type="password" id="loginSenha" placeholder="Sua senha" required autocomplete="current-password"/>
+                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+            </div>
+            <button type="submit" class="btn-auth" id="btnLogin">Entrar na conta</button>
+          </form>
+          <div class="divider">ou</div>
+          <div class="auth-footer-link">
+            Não tem conta? <a onclick="trocarAba('cadastro')">Cadastre-se grátis</a>
+          </div>
+        </div>
+
+        <!-- CADASTRO PANEL -->
+        <div class="auth-panel" id="panelCadastro">
+          <div class="auth-error" id="erroCadastro">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span></span>
+          </div>
+          <form id="formCadastro" onsubmit="handleCadastro(event)">
+            <div class="form-group">
+              <label for="cadNome">Nome completo</label>
+              <div class="input-wrap">
+                <input type="text" id="cadNome" placeholder="Seu nome completo" required autocomplete="name"/>
+                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cadTelefone">Telefone</label>
+              <div class="input-wrap">
+                <input type="text" id="cadTelefone" placeholder="(11) 99999-9999" maxlength="15" autocomplete="tel"/>
+                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cadCpf">CPF</label>
+              <div class="input-wrap">
+                <input type="text" id="cadCpf" placeholder="000.000.000-00" maxlength="14" required autocomplete="off"/>
+                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+                </svg>
+              </div>
+              <div class="input-hint">Será usado para fazer login</div>
+            </div>
+            <div class="form-group">
+              <label for="cadSenha">Senha</label>
+              <div class="input-wrap">
+                <input type="password" id="cadSenha" placeholder="Mínimo 6 caracteres" minlength="6" required autocomplete="new-password"/>
+                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cadConfirmar">Confirmar senha</label>
+              <div class="input-wrap">
+                <input type="password" id="cadConfirmar" placeholder="Repita a senha" required autocomplete="new-password"/>
+                <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M9 12l2 2 4-4"/><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+            </div>
+            <button type="submit" class="btn-auth" id="btnCadastro">Criar minha conta</button>
+          </form>
+          <div class="divider">ou</div>
+          <div class="auth-footer-link">
+            Já tem conta? <a onclick="trocarAba('login')">Faça login</a>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Se já logado, redirecionar
+        if (auth.estaLogado()) {
+          const params = new URLSearchParams(window.location.search);
+          window.location.href = params.get('redirect') || (auth.eAdmin() ? 'admin.html' : 'index.html');
+          return;
+        }
+
+        // Máscaras
+        document.getElementById('loginCpf').addEventListener('input', mascaraCpf);
+        document.getElementById('cadCpf').addEventListener('input', mascaraCpf);
+        document.getElementById('cadTelefone').addEventListener('input', mascaraTelefone);
+
+        // Verificar aba por query param
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('tab') === 'cadastro') trocarAba('cadastro');
+
+      });
+
+      // ── Tab switching ─────────────────────────────────────────
+      const tabTitles = {
+        login:    { title: 'Bem-vindo de volta',  sub: 'Entre na sua conta para fazer seu pedido' },
+        cadastro: { title: 'Crie sua conta',       sub: 'Cadastre-se gratuitamente e comece a pedir' }
+      };
+
+      function trocarAba(aba) {
+        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab' + capitalize(aba)).classList.add('active');
+        document.getElementById('panel' + capitalize(aba)).classList.add('active');
+        document.getElementById('authTitle').textContent = tabTitles[aba].title;
+        document.getElementById('authSub').textContent   = tabTitles[aba].sub;
+        limparErros();
+      }
+
+      function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+      // ── Error helpers ─────────────────────────────────────────
+      function mostrarErro(id, msg) {
+        const el   = document.getElementById(id);
+        const span = el.querySelector('span');
+        if (span) span.textContent = msg;
+        else      el.textContent   = msg;
+        el.classList.add('visible');
+      }
+
+      function limparErros() {
+        document.querySelectorAll('.auth-error').forEach(e => {
+          e.classList.remove('visible');
+          const span = e.querySelector('span');
+          if (span) span.textContent = '';
+        });
+      }
+
+      // ── Masks ─────────────────────────────────────────────────
+      function mascaraCpf(e) {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, '$1.$2.$3-$4');
+        else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{0,3})/, '$1.$2.$3');
+        else if (v.length > 3) v = v.replace(/(\d{3})(\d{0,3})/, '$1.$2');
+        e.target.value = v;
+      }
+
+      function mascaraTelefone(e) {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 10)      v = v.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+        else if (v.length > 6)  v = v.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+        else if (v.length > 2)  v = v.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+        e.target.value = v;
+      }
+
+      // ── Login ─────────────────────────────────────────────────
+      async function handleLogin(e) {
+        e.preventDefault();
+        limparErros();
+        const btn = document.getElementById('btnLogin');
+        btn.disabled = true;
+        btn.textContent = 'Entrando...';
+
+        try {
+          const cpf   = document.getElementById('loginCpf').value.trim();
+          const senha = document.getElementById('loginSenha').value;
+          const resp  = await api.login({ cpf, senha });
+          auth.salvar(resp);
+          toast.show(resp.mensagem || 'Login realizado!', 'success');
+          const params = new URLSearchParams(window.location.search);
+          setTimeout(() => {
+            window.location.href = params.get('redirect') || (auth.eAdmin() ? 'admin.html' : 'index.html');
+          }, 600);
+        } catch (err) {
+          mostrarErro('erroLogin', err.message);
+          btn.disabled = false;
+          btn.textContent = 'Entrar na conta';
+        }
+      }
+
+      // ── Cadastro ──────────────────────────────────────────────
+      async function handleCadastro(e) {
+        e.preventDefault();
+        limparErros();
+
+        const nome      = document.getElementById('cadNome').value.trim();
+        const telefone  = document.getElementById('cadTelefone').value.trim();
+        const cpf       = document.getElementById('cadCpf').value.trim();
+        const senha     = document.getElementById('cadSenha').value;
+        const confirmar = document.getElementById('cadConfirmar').value;
+
+        if (senha !== confirmar) {
+          mostrarErro('erroCadastro', 'As senhas não coincidem.');
+          return;
+        }
+        if (senha.length < 6) {
+          mostrarErro('erroCadastro', 'A senha deve ter ao menos 6 caracteres.');
+          return;
+        }
+
+        const btn = document.getElementById('btnCadastro');
+        btn.disabled = true;
+        btn.textContent = 'Criando conta...';
+
+        try {
+          const resp = await api.cadastrar({ nome, telefone: telefone || null, cpf, senha });
+          auth.salvar(resp);
+          toast.show(resp.mensagem || 'Conta criada com sucesso!', 'success');
+          setTimeout(() => { window.location.href = 'index.html'; }, 600);
+        } catch (err) {
+          mostrarErro('erroCadastro', err.message);
+          btn.disabled = false;
+          btn.textContent = 'Criar minha conta';
+        }
+      }
+    </script>
+  </body>
+</html>

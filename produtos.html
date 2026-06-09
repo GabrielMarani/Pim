@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Confira nossos produtos de café especial">
+    <title>Produtos | Café Artesanal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <circle cx="20" cy="20" r="18" fill="#4B2E2B"/>
+                        <path d="M20 10C15 10 12 12 12 15V18C12 21 15 23 20 23C25 23 28 21 28 18V15C28 12 25 10 20 10Z" fill="#F5E6D3"/>
+                        <ellipse cx="20" cy="25" rx="6" ry="2" fill="#4B2E2B"/>
+                        <path d="M14 25V28C14 29 16 30 20 30C24 30 26 29 26 28V25" stroke="#4B2E2B" stroke-width="1.5"/>
+                    </svg>
+                    <span>Café Artesanal</span>
+                </div>
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html" class="nav-link">Início</a>
+                    <a href="produtos.html" class="nav-link active">Produtos</a>
+                    <a href="index.html#sobre" class="nav-link">Sobre</a>
+                    <a href="carrinho.html" class="nav-link cart-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"/>
+                            <circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                    <a href="pedidos.html" class="nav-link">Pedidos</a>
+                    <div id="authNav"></div>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1 class="page-title">Nossos Produtos</h1>
+            <p class="page-description">Explore nossa seleção de cafés especiais e acompanhamentos</p>
+        </div>
+    </section>
+
+    <!-- Produtos -->
+    <section class="products-section">
+        <div class="container">
+            <!-- Filtros e Busca -->
+            <div class="products-toolbar">
+                <div class="search-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Buscar produtos..."
+                        aria-label="Buscar produtos"
+                    >
+                </div>
+
+                <div class="filters-group">
+                    <div class="filter-item">
+                        <label for="categoryFilter">Categoria:</label>
+                        <select id="categoryFilter" aria-label="Filtrar por categoria">
+                            <option value="all">Todas</option>
+                            <option value="cafes">Cafés</option>
+                            <option value="bebidas">Bebidas</option>
+                            <option value="acompanhamentos">Acompanhamentos</option>
+                            <option value="graos">Grãos</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-item">
+                        <label for="sortFilter">Ordenar:</label>
+                        <select id="sortFilter" aria-label="Ordenar produtos">
+                            <option value="name">Nome (A-Z)</option>
+                            <option value="price-asc">Preço (Menor)</option>
+                            <option value="price-desc">Preço (Maior)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categorias Pills -->
+            <div class="category-pills" id="categoryPills">
+                <button class="pill active" data-category="all">Todos</button>
+                <button class="pill" data-category="cafes">Cafés</button>
+                <button class="pill" data-category="bebidas">Bebidas</button>
+                <button class="pill" data-category="acompanhamentos">Acompanhamentos</button>
+                <button class="pill" data-category="graos">Grãos</button>
+            </div>
+
+            <!-- Grid de Produtos -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Produtos serão carregados aqui via JavaScript -->
+            </div>
+
+            <!-- Mensagem de sem resultados -->
+            <div class="no-results" id="noResults" style="display: none;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <h3>Nenhum produto encontrado</h3>
+                <p>Tente ajustar seus filtros ou busca</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                            <circle cx="20" cy="20" r="18" fill="#4B2E2B"/>
+                            <path d="M20 10C15 10 12 12 12 15V18C12 21 15 23 20 23C25 23 28 21 28 18V15C28 12 25 10 20 10Z" fill="#F5E6D3"/>
+                            <ellipse cx="20" cy="25" rx="6" ry="2" fill="#4B2E2B"/>
+                            <path d="M14 25V28C14 29 16 30 20 30C24 30 26 29 26 28V25" stroke="#4B2E2B" stroke-width="1.5"/>
+                        </svg>
+                        <span>Café Artesanal</span>
+                    </div>
+                    <p class="footer-description">
+                        A melhor experiência em café especial, com grãos selecionados e torra artesanal.
+                    </p>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-title">Links Rápidos</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="produtos.html">Produtos</a></li>
+                        <li><a href="index.html#sobre">Sobre</a></li>
+                        <li><a href="carrinho.html">Carrinho</a></li>
+                        <li><a href="pedidos.html">Pedidos</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-title">Contato</h3>
+                    <ul class="footer-contact">
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <span>Rua do Café, 123 - São Paulo, SP</span>
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                            <span>(11) 98765-4321</span>
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                            <span>contato@cafeartesanal.com</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-title">Horário</h3>
+                    <ul class="footer-hours">
+                        <li>
+                            <span>Segunda - Sexta</span>
+                            <strong>07:00 - 20:00</strong>
+                        </li>
+                        <li>
+                            <span>Sábado - Domingo</span>
+                            <strong>08:00 - 18:00</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 Café Artesanal. Todos os direitos reservados.</p>
+                <p>Desenvolvido com <span class="heart">♥</span> para amantes de café</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/products.js"></script>
+</body>
+</html>
