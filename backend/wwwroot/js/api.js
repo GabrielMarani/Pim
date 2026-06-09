@@ -3,7 +3,7 @@
 // Centraliza todas as chamadas ao backend C#
 // ============================================================
 
-const API_BASE = "https://pim-production-83c9.up.railway.app";
+const API_BASE = "https://pim-production-83c9.up.railway.app/api";
 
 const api = {
   // --------------------------------------------------------
