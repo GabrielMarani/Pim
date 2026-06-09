@@ -2,21 +2,24 @@
 -- Banco de Dados: bd_cafeteria
 -- Sistema de Pedidos - Café Artesanal
 -- ============================================================
-CREATE DATABASE bd_cafeteria;
-USE bd_cafeteria;
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+SET NAMES utf8mb4;
 
 -- ============================================================
 -- TABELA: tb_categoria
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS tb_categoria (
-  ID_CATEGORIA int(11) NOT NULL AUTO_INCREMENT,
-  NOME_CATEGORIA varchar(50) NOT NULL,
-  SLUG_CATEGORIA varchar(50) NOT NULL,
+CREATE TABLE IF NOT EXISTS `tb_categoria` (
+  `ID_CATEGORIA` int(11) NOT NULL AUTO_INCREMENT,
+  `NOME_CATEGORIA` varchar(50) NOT NULL,
+  `SLUG_CATEGORIA` varchar(50) NOT NULL,
   PRIMARY KEY (`ID_CATEGORIA`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO tb_categoria (ID_CATEGORIA, NOME_CATEGORIA, SLUG_CATEGORIA) VALUES
+INSERT INTO `tb_categoria` (`ID_CATEGORIA`, `NOME_CATEGORIA`, `SLUG_CATEGORIA`) VALUES
 (1, 'Cafés', 'cafes'),
 (2, 'Bebidas', 'bebidas'),
 (3, 'Acompanhamentos', 'acompanhamentos'),
@@ -26,17 +29,17 @@ INSERT INTO tb_categoria (ID_CATEGORIA, NOME_CATEGORIA, SLUG_CATEGORIA) VALUES
 -- TABELA: tb_produto
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS tb_produto (
-  ID_PRODUTO int(11) NOT NULL AUTO_INCREMENT,
-  COD_CATEGORIA int(11) DEFAULT NULL,
-  NOME_PRODUTO varchar(100) NOT NULL,
-  DESCRICAO_PRODUTO varchar(255) DEFAULT NULL,
-  IMAGEM_PRODUTO varchar(500) DEFAULT NULL,
-  VALOR_UNITARIO_PRODUTO decimal(7,2) NOT NULL,
-  DESTAQUE tinyint(1) NOT NULL DEFAULT 0,
-  PRIMARY KEY (ID_PRODUTO),
-  KEY COD_CATEGORIA (COD_CATEGORIA),
-  CONSTRAINT tb_produto_ibfk_1 FOREIGN KEY (COD_CATEGORIA) REFERENCES tb_categoria (ID_CATEGORIA) ON DELETE SET NULL ON UPDATE CASCADE
+CREATE TABLE IF NOT EXISTS `tb_produto` (
+  `ID_PRODUTO` int(11) NOT NULL AUTO_INCREMENT,
+  `COD_CATEGORIA` int(11) DEFAULT NULL,
+  `NOME_PRODUTO` varchar(100) NOT NULL,
+  `DESCRICAO_PRODUTO` varchar(255) DEFAULT NULL,
+  `IMAGEM_PRODUTO` varchar(500) DEFAULT NULL,
+  `VALOR_UNITARIO_PRODUTO` decimal(7,2) NOT NULL,
+  `DESTAQUE` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`ID_PRODUTO`),
+  KEY `COD_CATEGORIA` (`COD_CATEGORIA`),
+  CONSTRAINT `tb_produto_ibfk_1` FOREIGN KEY (`COD_CATEGORIA`) REFERENCES `tb_categoria` (`ID_CATEGORIA`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `tb_produto` (`ID_PRODUTO`, `COD_CATEGORIA`, `NOME_PRODUTO`, `DESCRICAO_PRODUTO`, `IMAGEM_PRODUTO`, `VALOR_UNITARIO_PRODUTO`, `DESTAQUE`) VALUES
@@ -74,16 +77,16 @@ INSERT INTO `tb_produto` (`ID_PRODUTO`, `COD_CATEGORIA`, `NOME_PRODUTO`, `DESCRI
 -- TABELA: tb_usuario
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS tb_usuario (
-  ID_USUARIO int(11) NOT NULL AUTO_INCREMENT,
-  NOME_USUARIO varchar(100) NOT NULL,
-  TELEFONE_USUARIO varchar(20) DEFAULT NULL,
-  CPF_USUARIO varchar(14) NOT NULL,
-  SENHA_HASH varchar(64) NOT NULL,
-  TIPO_USUARIO enum('cliente','admin') NOT NULL DEFAULT 'cliente',
-  DATA_CADASTRO datetime NOT NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (ID_USUARIO),
-  UNIQUE KEY uq_cpf (CPF_USUARIO)
+CREATE TABLE IF NOT EXISTS `tb_usuario` (
+  `ID_USUARIO` int(11) NOT NULL AUTO_INCREMENT,
+  `NOME_USUARIO` varchar(100) NOT NULL,
+  `TELEFONE_USUARIO` varchar(20) DEFAULT NULL,
+  `CPF_USUARIO` varchar(14) NOT NULL,
+  `SENHA_HASH` varchar(64) NOT NULL,
+  `TIPO_USUARIO` enum('cliente','admin') NOT NULL DEFAULT 'cliente',
+  `DATA_CADASTRO` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`ID_USUARIO`),
+  UNIQUE KEY `uq_cpf` (`CPF_USUARIO`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ============================================================
@@ -93,8 +96,8 @@ CREATE TABLE IF NOT EXISTS tb_usuario (
 
 SET @admin_hash = SHA2(CONCAT('admin123', '00000000000'), 256);
 
-INSERT IGNORE INTO tb_usuario
-  (NOME_USUARIO, CPF_USUARIO, TELEFONE_USUARIO, SENHA_HASH, TIPO_USUARIO)
+INSERT IGNORE INTO `tb_usuario`
+  (`NOME_USUARIO`, `CPF_USUARIO`, `TELEFONE_USUARIO`, `SENHA_HASH`, `TIPO_USUARIO`)
 VALUES
   ('Administrador', '000.000.000-00', '(11) 99999-0000', @admin_hash, 'admin');
 
@@ -102,32 +105,32 @@ VALUES
 -- TABELA: tb_pedido
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS tb_pedido (
-  ID_PEDIDO int(11) NOT NULL AUTO_INCREMENT,
-  ID_USUARIO int(11) DEFAULT NULL,
-  TOTAL_PEDIDO decimal(7,2) NOT NULL,
-  DATA_PEDIDO datetime NOT NULL DEFAULT current_timestamp(),
-  STATUS_PEDIDO varchar(20) NOT NULL DEFAULT 'pendente' COMMENT 'pendente | preparando | entregue | cancelado',
+CREATE TABLE IF NOT EXISTS `tb_pedido` (
+  `ID_PEDIDO` int(11) NOT NULL AUTO_INCREMENT,
+  `ID_USUARIO` int(11) DEFAULT NULL,
+  `TOTAL_PEDIDO` decimal(7,2) NOT NULL,
+  `DATA_PEDIDO` datetime NOT NULL DEFAULT current_timestamp(),
+  `STATUS_PEDIDO` varchar(20) NOT NULL DEFAULT 'pendente' COMMENT 'pendente | preparando | entregue | cancelado',
   PRIMARY KEY (`ID_PEDIDO`),
-  KEY fk_pedido_usuario (ID_USUARIO),
-  CONSTRAINT fk_pedido_usuario FOREIGN KEY (ID_USUARIO) REFERENCES tb_usuario (ID_USUARIO) ON DELETE SET NULL
+  KEY `fk_pedido_usuario` (`ID_USUARIO`),
+  CONSTRAINT `fk_pedido_usuario` FOREIGN KEY (`ID_USUARIO`) REFERENCES `tb_usuario` (`ID_USUARIO`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- ============================================================
 -- TABELA: tb_item_pedido
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS tb_item_pedido (
-  ID_ITEM int(11) NOT NULL AUTO_INCREMENT,
-  COD_PEDIDO int(11) NOT NULL,
-  ID_PRODUTO int(11) NOT NULL,
-  QUANTIDADE int(11) NOT NULL,
-  VALOR_UNITARIO decimal(10,2) NOT NULL,
-  PRIMARY KEY (ID_ITEM),
-  KEY fk_item_pedido (COD_PEDIDO),
-  KEY fk_item_produto (ID_PRODUTO),
-  CONSTRAINT fk_item_pedido FOREIGN KEY (COD_PEDIDO) REFERENCES tb_pedido (ID_PEDIDO) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT fk_item_produto FOREIGN KEY (ID_PRODUTO) REFERENCES tb_produto (ID_PRODUTO) ON DELETE RESTRICT ON UPDATE CASCADE
+CREATE TABLE IF NOT EXISTS `tb_item_pedido` (
+  `ID_ITEM` int(11) NOT NULL AUTO_INCREMENT,
+  `COD_PEDIDO` int(11) NOT NULL,
+  `ID_PRODUTO` int(11) NOT NULL,
+  `QUANTIDADE` int(11) NOT NULL,
+  `VALOR_UNITARIO` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`ID_ITEM`),
+  KEY `fk_item_pedido` (`COD_PEDIDO`),
+  KEY `fk_item_produto` (`ID_PRODUTO`),
+  CONSTRAINT `fk_item_pedido` FOREIGN KEY (`COD_PEDIDO`) REFERENCES `tb_pedido` (`ID_PEDIDO`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_item_produto` FOREIGN KEY (`ID_PRODUTO`) REFERENCES `tb_produto` (`ID_PRODUTO`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 COMMIT;

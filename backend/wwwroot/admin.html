@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Café Artesanal | Painel Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      /* ── Variáveis CSS ausentes em style.css ────────────────── */
+      :root {
+        --coffee-dark:   #2C1A0E;
+        --coffee-medium: #6B3A2A;
+        --coffee-light:  #C89B7B;
+        --font-primary:  'Poppins', sans-serif;
+        --border-color:  rgba(107, 58, 42, 0.18);
+      }
+      body.dark-mode {
+        --coffee-dark:   #1A0E06;
+        --coffee-medium: #8B5E4A;
+        --border-color:  rgba(200, 155, 123, 0.2);
+      }
+
+      .admin-page {
+        padding: 90px 0 3rem;
+        min-height: 100vh;
+        background: var(--bg-primary);
+      }
+      .admin-header {
+        background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-medium) 100%);
+        padding: 1.5rem 0;
+        margin-bottom: 2rem;
+      }
+      .admin-header .container { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+      .admin-title { color: #fff; font-size: 1.5rem; font-weight: 700; margin: 0; }
+      .admin-subtitle { color: rgba(255,255,255,0.8); font-size: 0.875rem; margin: 0.25rem 0 0; }
+      .admin-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-color); }
+      .admin-tab { padding: 0.75rem 1.5rem; background: none; border: none; cursor: pointer; font-family: var(--font-primary); font-size: 0.95rem; font-weight: 500; color: var(--text-secondary); transition: all 0.2s; position: relative; border-radius: 8px 8px 0 0; display: flex; align-items: center; gap: 0.5rem; }
+      .admin-tab.active { color: var(--coffee-medium); font-weight: 600; background: var(--bg-secondary); }
+      .admin-tab.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--coffee-medium); }
+      .admin-tab:hover:not(.active) { color: var(--text-primary); background: var(--bg-tertiary); }
+      .admin-panel { display: none; }
+      .admin-panel.active { display: block; }
+      .admin-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+      .admin-toolbar h2 { font-size: 1.1rem; font-weight: 600; margin: 0; color: var(--text-primary); }
+      .btn-primary { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.65rem 1.25rem; background: var(--coffee-medium); color: #fff; border: none; border-radius: 10px; font-family: var(--font-primary); font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s, transform 0.15s; text-decoration: none; }
+      .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+      .btn-danger { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; background: #e74c3c; color: #fff; border: none; border-radius: 8px; font-size: 0.825rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; font-family: var(--font-primary); }
+      .btn-danger:hover { opacity: 0.85; }
+      .btn-secondary { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.85rem; background: var(--bg-tertiary); color: var(--text-primary); border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 0.825rem; font-weight: 600; cursor: pointer; transition: background 0.2s; font-family: var(--font-primary); }
+      .btn-secondary:hover { background: var(--border-color); }
+      .product-admin-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+      .product-admin-card { background: var(--bg-secondary); border-radius: 14px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid var(--border-color); transition: box-shadow 0.2s; }
+      .product-admin-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+      .product-admin-img { width: 100%; height: 160px; object-fit: cover; background: var(--bg-tertiary); }
+      .product-admin-img-placeholder { width: 100%; height: 160px; background: var(--bg-tertiary); display: flex; align-items: center; justify-content: center; color: var(--text-muted, #aaa); }
+      .product-admin-body { padding: 1rem; }
+      .product-admin-name { font-weight: 600; font-size: 1rem; color: var(--text-primary); margin: 0 0 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .product-admin-meta { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+      .product-admin-price { font-size: 1.1rem; font-weight: 700; color: var(--coffee-medium); }
+      .product-admin-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
+      .badge-destaque { background: #f39c12; color: #fff; padding: 0.15rem 0.5rem; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+      .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+      .modal-overlay.visible { opacity: 1; pointer-events: all; }
+      .modal { background: var(--bg-secondary); border-radius: 18px; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; box-shadow: 0 25px 80px rgba(0,0,0,0.3); transform: translateY(20px); transition: transform 0.2s; }
+      .modal-overlay.visible .modal { transform: translateY(0); }
+      .modal-header { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+      .modal-header h3 { margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+      .modal-close { background: none; border: none; cursor: pointer; color: var(--text-secondary); padding: 0.25rem; border-radius: 6px; transition: background 0.15s; }
+      .modal-close:hover { background: var(--bg-tertiary); }
+      .modal-body { padding: 1.5rem; }
+      .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 0.75rem; }
+      .form-group { margin-bottom: 1.1rem; }
+      .form-group label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.4rem; }
+      .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.7rem 1rem; border: 1.5px solid var(--border-color); border-radius: 10px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-primary); font-size: 0.9rem; transition: border-color 0.2s; box-sizing: border-box; }
+      .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--coffee-medium); box-shadow: 0 0 0 3px rgba(139,90,43,0.12); }
+      .form-group textarea { resize: vertical; min-height: 80px; }
+      .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .form-check { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: var(--text-primary); }
+      .form-check input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--coffee-medium); }
+      .orders-filters { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+      .filter-btn { padding: 0.45rem 1rem; border: 1.5px solid var(--border-color); border-radius: 20px; background: var(--bg-secondary); color: var(--text-secondary); font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: var(--font-primary); }
+      .filter-btn.active, .filter-btn:hover { border-color: var(--coffee-medium); color: var(--coffee-medium); background: rgba(139,90,43,0.08); }
+      .order-card { background: var(--bg-secondary); border-radius: 14px; border: 1px solid var(--border-color); margin-bottom: 1rem; overflow: hidden; transition: box-shadow 0.2s; }
+      .order-card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+      .order-card-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; flex-wrap: wrap; gap: 0.5rem; cursor: pointer; }
+      .order-card-header:hover { background: var(--bg-tertiary); }
+      .order-info h4 { margin: 0 0 0.2rem; font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+      .order-info p { margin: 0; font-size: 0.8rem; color: var(--text-secondary); }
+      .order-right { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+      .order-total { font-weight: 700; font-size: 1.05rem; color: var(--coffee-medium); }
+      .status-badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+      .status-pendente { background: #fff3cd; color: #856404; }
+      .status-preparando { background: #cce5ff; color: #004085; }
+      .status-entregue { background: #d4edda; color: #155724; }
+      .status-cancelado { background: #f8d7da; color: #721c24; }
+      body.dark-mode .status-pendente { background: rgba(255,193,7,0.2); color: #ffc107; }
+      body.dark-mode .status-preparando { background: rgba(0,123,255,0.2); color: #74b9ff; }
+      body.dark-mode .status-entregue { background: rgba(40,167,69,0.2); color: #55efc4; }
+      body.dark-mode .status-cancelado { background: rgba(220,53,69,0.2); color: #ff7675; }
+      .order-items-body { padding: 0 1.25rem 1.25rem; display: none; border-top: 1px solid var(--border-color); }
+      .order-items-body.open { display: block; }
+      .order-items-list { list-style: none; margin: 0.75rem 0; padding: 0; }
+      .order-items-list li { display: flex; justify-content: space-between; align-items: center; padding: 0.4rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.875rem; color: var(--text-secondary); }
+      .order-items-list li:last-child { border-bottom: none; }
+      .order-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; align-items: center; }
+      .order-actions label { font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
+      .select-status { padding: 0.45rem 0.75rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-primary); font-size: 0.875rem; cursor: pointer; }
+      .select-status:focus { outline: none; border-color: var(--coffee-medium); }
+      .state-empty, .state-loading { text-align: center; padding: 3rem 1rem; color: var(--text-secondary); }
+      .state-empty svg, .state-loading svg { margin-bottom: 1rem; opacity: 0.4; }
+      .state-empty p, .state-loading p { margin: 0.5rem 0 0; font-size: 0.95rem; }
+      .spinner { width: 36px; height: 36px; border: 3px solid var(--border-color); border-top-color: var(--coffee-medium); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .product-admin-grid { grid-template-columns: 1fr; } .admin-toolbar { flex-direction: column; align-items: flex-start; } }
+    </style>
+  </head>
+  <body>
+    <div class="toast-container" id="toastContainer"></div>
+
+    <nav class="navbar" id="navbar">
+      <div class="container">
+        <div class="nav-content">
+          <div class="logo">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="18" fill="#4B2E2B"/>
+              <path d="M20 10C15 10 12 12 12 15V18C12 21 15 23 20 23C25 23 28 21 28 18V15C28 12 25 10 20 10Z" fill="#F5E6D3"/>
+              <ellipse cx="20" cy="25" rx="6" ry="2" fill="#4B2E2B"/>
+              <path d="M14 25V28C14 29 16 30 20 30C24 30 26 29 26 28V25" stroke="#4B2E2B" stroke-width="1.5"/>
+            </svg>
+            <span>Café Artesanal</span>
+          </div>
+          <div class="nav-links" id="navLinks">
+            <a href="index.html" class="nav-link">Início</a>
+            <a href="produtos.html" class="nav-link">Produtos</a>
+            <a href="pedidos.html" class="nav-link">Pedidos</a>
+            <a href="admin.html" class="nav-link active">Admin</a>
+            <div id="authNav"></div>
+            <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
+              <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+              <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+            </button>
+          </div>
+          <button class="hamburger" id="hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="admin-header">
+      <div class="container">
+        <div>
+          <h1 class="admin-title">Painel Administrativo</h1>
+          <p class="admin-subtitle" id="adminWelcome">Gerencie produtos e pedidos</p>
+        </div>
+      </div>
+    </div>
+
+    <main class="admin-page" style="padding-top:0">
+      <div class="container">
+        <div class="admin-tabs">
+          <button class="admin-tab active" id="tabProdutos" onclick="trocarAba('produtos')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Produtos
+          </button>
+          <button class="admin-tab" id="tabPedidos" onclick="trocarAba('pedidos')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>
+            Pedidos
+          </button>
+        </div>
+
+        <div class="admin-panel active" id="panelProdutos">
+          <div class="admin-toolbar">
+            <h2 id="produtosCount">Produtos</h2>
+            <button class="btn-primary" onclick="abrirModalProduto(null)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Novo Produto
+            </button>
+          </div>
+          <div id="produtosGrid" class="product-admin-grid">
+            <div class="state-loading"><div class="spinner"></div><p>Carregando produtos...</p></div>
+          </div>
+        </div>
+
+        <div class="admin-panel" id="panelPedidos">
+          <div class="admin-toolbar">
+            <h2 id="pedidosCount">Pedidos</h2>
+            <button class="btn-secondary" onclick="carregarPedidos()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.62"/></svg>
+              Atualizar
+            </button>
+          </div>
+          <div class="orders-filters">
+            <button class="filter-btn active" data-filter="todos"     onclick="filtrarPedidos('todos', this)">Todos</button>
+            <button class="filter-btn" data-filter="pendente"         onclick="filtrarPedidos('pendente', this)">Pendentes</button>
+            <button class="filter-btn" data-filter="preparando"       onclick="filtrarPedidos('preparando', this)">Em preparo</button>
+            <button class="filter-btn" data-filter="entregue"         onclick="filtrarPedidos('entregue', this)">Entregues</button>
+            <button class="filter-btn" data-filter="cancelado"        onclick="filtrarPedidos('cancelado', this)">Cancelados</button>
+          </div>
+          <div id="pedidosList">
+            <div class="state-loading"><div class="spinner"></div><p>Carregando pedidos...</p></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="modal-overlay" id="modalProduto">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="modalProdutoTitulo">Novo Produto</h3>
+          <button class="modal-close" onclick="fecharModal('modalProduto')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="formProduto" onsubmit="salvarProduto(event)">
+            <input type="hidden" id="produtoId" />
+            <div class="form-group"><label for="prodNome">Nome *</label><input type="text" id="prodNome" placeholder="Nome do produto" required /></div>
+            <div class="form-group"><label for="prodDescricao">Descrição</label><textarea id="prodDescricao" placeholder="Descrição breve do produto"></textarea></div>
+            <div class="form-row">
+              <div class="form-group"><label for="prodPreco">Preço (R$) *</label><input type="number" id="prodPreco" placeholder="0.00" step="0.01" min="0" required /></div>
+              <div class="form-group"><label for="prodCategoria">Categoria</label><select id="prodCategoria"><option value="">Sem categoria</option></select></div>
+            </div>
+            <div class="form-group"><label for="prodImagem">URL da imagem</label><input type="text" id="prodImagem" placeholder="https://..." /></div>
+            <div class="form-group"><label class="form-check"><input type="checkbox" id="prodDestaque" />Produto em destaque</label></div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="fecharModal('modalProduto')">Cancelar</button>
+          <button class="btn-primary" id="btnSalvarProduto" onclick="salvarProduto(event)">Salvar Produto</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="modalConfirmar">
+      <div class="modal" style="max-width:380px">
+        <div class="modal-header">
+          <h3>Confirmar exclusão</h3>
+          <button class="modal-close" onclick="fecharModal('modalConfirmar')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="modal-body"><p id="confirmarMsg" style="color:var(--text-primary);margin:0">Tem certeza?</p></div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="fecharModal('modalConfirmar')">Cancelar</button>
+          <button class="btn-danger" id="btnConfirmarAcao">Excluir</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/autenticacao.js"></script>
+    <script src="js/utilitarios.js"></script>
+    <!-- data.js removido: define 'const categorias' que conflita com a variável local -->
+    <script>
+      let todosProdutos = [], todosPedidos = [], filtroAtual = 'todos', categorias = [];
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        initThemeToggle(); initNavbar();
+
+        const dados = auth.obter();
+        if (!dados || !dados.token) { window.location.href = 'login.html'; return; }
+        if (dados.tipo !== 'admin') { window.location.href = 'index.html'; return; }
+
+        auth.atualizarNavbar();
+        const el = document.getElementById('adminWelcome');
+        if (el) el.textContent = `Olá, ${(dados.nome || 'Admin').split(' ')[0]}! Gerencie produtos e pedidos.`;
+
+        carregarProdutos();
+        carregarCategorias();
+        carregarPedidos();
+      });
+
+      function trocarAba(aba) {
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
+        document.getElementById('tab' + capitalize(aba)).classList.add('active');
+        document.getElementById('panel' + capitalize(aba)).classList.add('active');
+      }
+      function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+      function abrirModal(id) { document.getElementById(id).classList.add('visible'); document.body.style.overflow = 'hidden'; }
+      function fecharModal(id) { document.getElementById(id).classList.remove('visible'); document.body.style.overflow = ''; }
+      document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o) fecharModal(o.id); }));
+
+      async function carregarProdutos() {
+        document.getElementById('produtosGrid').innerHTML =
+          `<div class="state-loading"><div class="spinner"></div><p>Carregando produtos...</p></div>`;
+        try { todosProdutos = await api.getProdutos(); renderProdutos(); }
+        catch (err) {
+          document.getElementById('produtosGrid').innerHTML =
+            `<div class="state-empty" style="color:#c0392b">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" style="margin-bottom:.75rem">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <p style="font-weight:600">Erro ao carregar produtos</p>
+              <p style="font-size:.85rem;margin-top:.25rem">${err.message}</p>
+              <button onclick="carregarProdutos()" class="btn-secondary" style="margin-top:1rem">Tentar novamente</button>
+            </div>`;
+        }
+      }
+
+      function renderProdutos() {
+        const grid = document.getElementById('produtosGrid');
+        document.getElementById('produtosCount').textContent = `Produtos (${todosProdutos.length})`;
+        if (!todosProdutos.length) { grid.innerHTML = `<div class="state-empty"><p>Nenhum produto cadastrado.</p></div>`; return; }
+        grid.innerHTML = todosProdutos.map(p => `
+          <div class="product-admin-card">
+            ${p.imagem ? `<img class="product-admin-img" src="${escHtml(p.imagem)}" alt="${escHtml(p.nome)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="product-admin-img-placeholder" style="display:none"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>` : `<div class="product-admin-img-placeholder"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`}
+            <div class="product-admin-body">
+              <h3 class="product-admin-name" title="${escHtml(p.nome)}">${escHtml(p.nome)}</h3>
+              <div class="product-admin-meta"><span>${escHtml(p.nomeCategoria || 'Sem categoria')}</span>${p.destaque ? `<span class="badge-destaque">★ Destaque</span>` : ''}</div>
+              <div class="product-admin-price">R$ ${p.preco.toFixed(2).replace('.', ',')}</div>
+              <div class="product-admin-actions">
+                <button class="btn-secondary" onclick='abrirModalProduto(${JSON.stringify(p)})'>Editar</button>
+                <button class="btn-danger" onclick="confirmarExcluir(${p.id}, '${escHtml(p.nome)}')">Excluir</button>
+              </div>
+            </div>
+          </div>`).join('');
+      }
+
+      async function carregarCategorias() {
+        try {
+          categorias = await api.getCategorias();
+          const sel = document.getElementById('prodCategoria');
+          categorias.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.nome; sel.appendChild(o); });
+        } catch {}
+      }
+
+      function abrirModalProduto(produto) {
+        const editar = produto !== null;
+        document.getElementById('modalProdutoTitulo').textContent = editar ? 'Editar Produto' : 'Novo Produto';
+        document.getElementById('produtoId').value     = editar ? produto.id : '';
+        document.getElementById('prodNome').value      = editar ? produto.nome : '';
+        document.getElementById('prodDescricao').value = editar ? (produto.descricao || '') : '';
+        document.getElementById('prodPreco').value     = editar ? produto.preco : '';
+        document.getElementById('prodImagem').value    = editar ? (produto.imagem || '') : '';
+        document.getElementById('prodDestaque').checked = editar ? produto.destaque : false;
+        const sel = document.getElementById('prodCategoria');
+        sel.value = editar && produto.categoriaId ? produto.categoriaId : '';
+        document.getElementById('btnSalvarProduto').textContent = editar ? 'Salvar Alterações' : 'Criar Produto';
+        abrirModal('modalProduto');
+      }
+
+      async function salvarProduto(e) {
+        if (e && e.preventDefault) e.preventDefault();
+        const id = document.getElementById('produtoId').value;
+        const dados = { nome: document.getElementById('prodNome').value.trim(), descricao: document.getElementById('prodDescricao').value.trim() || null, preco: parseFloat(document.getElementById('prodPreco').value), imagem: document.getElementById('prodImagem').value.trim() || null, destaque: document.getElementById('prodDestaque').checked, categoriaId: document.getElementById('prodCategoria').value ? parseInt(document.getElementById('prodCategoria').value) : null };
+        if (!dados.nome) { toast.show('Nome é obrigatório.', 'error'); return; }
+        if (!dados.preco || dados.preco <= 0) { toast.show('Preço inválido.', 'error'); return; }
+        const btn = document.getElementById('btnSalvarProduto');
+        btn.disabled = true; btn.textContent = 'Salvando...';
+        try {
+          if (id) { await api.atualizarProduto(parseInt(id), dados); toast.show('Produto atualizado!', 'success'); }
+          else { await api.criarProduto(dados); toast.show('Produto criado!', 'success'); }
+          fecharModal('modalProduto'); await carregarProdutos();
+        } catch (err) { toast.show(err.message, 'error'); }
+        finally { btn.disabled = false; btn.textContent = id ? 'Salvar Alterações' : 'Criar Produto'; }
+      }
+
+      function confirmarExcluir(id, nome) {
+        document.getElementById('confirmarMsg').textContent = `Tem certeza que deseja excluir "${nome}"? Esta ação não pode ser desfeita.`;
+        document.getElementById('btnConfirmarAcao').onclick = () => excluirProduto(id);
+        abrirModal('modalConfirmar');
+      }
+
+      async function excluirProduto(id) {
+        try { await api.deletarProduto(id); toast.show('Produto excluído.', 'success'); fecharModal('modalConfirmar'); await carregarProdutos(); }
+        catch (err) { toast.show(err.message, 'error'); }
+      }
+
+      async function carregarPedidos() {
+        document.getElementById('pedidosList').innerHTML = `<div class="state-loading"><div class="spinner"></div><p>Carregando pedidos...</p></div>`;
+        try { todosPedidos = await api.getPedidos(); renderPedidos(); }
+        catch (err) {
+          document.getElementById('pedidosList').innerHTML =
+            `<div class="state-empty" style="color:#c0392b">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" style="margin-bottom:.75rem">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <p style="font-weight:600">Erro ao carregar pedidos</p>
+              <p style="font-size:.85rem;margin-top:.25rem">${err.message}</p>
+              <button onclick="carregarPedidos()" class="btn-secondary" style="margin-top:1rem">Tentar novamente</button>
+            </div>`;
+        }
+      }
+
+      function filtrarPedidos(filtro, btn) {
+        filtroAtual = filtro;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderPedidos();
+      }
+
+      function renderPedidos() {
+        const lista = filtroAtual === 'todos' ? todosPedidos : todosPedidos.filter(p => p.status === filtroAtual);
+        document.getElementById('pedidosCount').textContent = `Pedidos (${lista.length}${filtroAtual !== 'todos' ? ' • ' + filtroAtual : ''})`;
+        const el = document.getElementById('pedidosList');
+        if (!lista.length) { el.innerHTML = `<div class="state-empty"><p>Nenhum pedido encontrado.</p></div>`; return; }
+        el.innerHTML = lista.map(p => `
+          <div class="order-card" id="order-${p.id}">
+            <div class="order-card-header" onclick="togglePedido(${p.id})">
+              <div class="order-info"><h4>${escHtml(p.numero)}</h4><p>${escHtml(p.nomeCliente || 'Cliente')} · ${formatarData(p.data)}</p></div>
+              <div class="order-right">
+                <span class="order-total">R$ ${p.total.toFixed(2).replace('.', ',')}</span>
+                <span class="status-badge status-${p.status}">${capitalize(p.status)}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="chevron-${p.id}" style="transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div class="order-items-body" id="items-${p.id}">
+              <ul class="order-items-list">${p.itens.map(i => `<li><span>${i.quantidade}× ${escHtml(i.nomeProduto)}</span><span>R$ ${(i.quantidade*i.valorUnitario).toFixed(2).replace('.', ',')}</span></li>`).join('')}</ul>
+              <div class="order-actions">
+                <label>Alterar status:</label>
+                <select class="select-status" id="sel-${p.id}">
+                  <option value="pendente"   ${p.status==='pendente'   ?'selected':''}>Pendente</option>
+                  <option value="preparando" ${p.status==='preparando' ?'selected':''}>Em preparo</option>
+                  <option value="entregue"   ${p.status==='entregue'   ?'selected':''}>Entregue</option>
+                  <option value="cancelado"  ${p.status==='cancelado'  ?'selected':''}>Cancelado</option>
+                </select>
+                <button class="btn-primary" onclick="atualizarStatusPedido(${p.id})" style="padding:0.45rem 1rem;font-size:0.85rem">Aplicar</button>
+              </div>
+            </div>
+          </div>`).join('');
+      }
+
+      function togglePedido(id) {
+        const body = document.getElementById(`items-${id}`);
+        const chevron = document.querySelector(`.chevron-${id}`);
+        const isOpen = body.classList.contains('open');
+        body.classList.toggle('open', !isOpen);
+        if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+      }
+
+      async function atualizarStatusPedido(id) {
+        const novoStatus = document.getElementById(`sel-${id}`).value;
+        try {
+          await api.atualizarStatus(id, novoStatus);
+          const p = todosPedidos.find(x => x.id === id);
+          if (p) p.status = novoStatus;
+          renderPedidos();
+          toast.show(`Status atualizado para "${novoStatus}".`, 'success');
+          const body = document.getElementById(`items-${id}`);
+          if (body) { body.classList.add('open'); const c = document.querySelector(`.chevron-${id}`); if(c) c.style.transform = 'rotate(180deg)'; }
+        } catch (err) { toast.show(err.message, 'error'); }
+      }
+
+      function escHtml(str) { return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+      function formatarData(iso) { try { return new Date(iso).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); } catch { return iso; } }
+    </script>
+  </body>
+</html>
